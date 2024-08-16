@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "198583559989",
+    "project_id": "firetest-3c477",
+    "storage_bucket": "firetest-3c477.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198583559989:android:40400f5367879210d48e7c",
+        "android_client_info": {
+          "package_name": "com.example.firetest"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdECWa2gNPFjvFvxRsgmurPPv9i1hFWdw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
