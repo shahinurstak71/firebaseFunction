@@ -1,97 +1,51 @@
-
+import 'package:firetest/app/data/usermodel.dart';
+import 'package:firetest/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 
-import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    body: Container(
-      height: MediaQuery.of(context).size.height,
-      width: MediaQuery.of(context).size.width,
-      child: Obx((){
-      
-      
-      
-          return Container(
-            height: 50,
-            width: MediaQuery.of(context).size.width,
-            child: ListView.builder(
-              itemCount: controller.users.length,
-              itemBuilder: (BuildContext Context, index){
-                  
-                final infoUser = controller.users[index];
-
-
-                print(infoUser.name);
-                return Container(
-                  height: 100,
-                  width: MediaQuery.of(context).size.width,
-                  child:Row(
-                    children: [
-                      Column(
-                        children: [
-                          Text(infoUser.name),
-                          Text(infoUser.email),
-                          Text(infoUser.phoneNumber)
-                          
-                          
-                          
-                        ],
-                      ),
-
-                      /// passing id for update data
-                      IconButton(
-                        onPressed: (){
-                        Get.toNamed(Routes.SIGNUP, arguments: infoUser);
-                          
-                         
-                          
-                          
-                          
-                        }, 
-                        icon: Icon(Icons.edit)
-                        ),
-
-                           IconButton(
-                        onPressed: (){
-                        controller.deleteUser(infoUser.id);
-                          
-                         
-                          
-                          
-                          
-                        }, 
-                        icon: Icon(Icons.delete)
-                        )
-                    ],
-                  )              
-                  );
-                  
-              }
-              
-              ),
-          );
-        }
-      
-      
-      
-      
-      
-      
+      appBar: AppBar(
+        title: Text('Users'),
       ),
-    ),
-
-    floatingActionButton: FloatingActionButton(
-      onPressed: (){
-        Get.toNamed(Routes.SIGNUP);
-      },
-      child: Text("send"),
+      body: Obx(() {
+        if (controller.users.isEmpty) {
+          return Center(child: Text('No users found.'));
+        }
+        return ListView.builder(
+          itemCount: controller.users.length,
+          itemBuilder: (context, index) {
+            UserModel user = controller.users[index];
+            return ListTile(
+              leading: CircleAvatar(
+                backgroundImage: user.imageUrl !=null
+                    ? NetworkImage(user.imageUrl!)
+                    : AssetImage('assets/default_avatar.png') as ImageProvider,
+              ),
+              title: Text(user.name),
+              subtitle: Text(user.email),
+              trailing: IconButton(
+                onPressed: (){
+                  controller.deleteUser(user.id);
+                },
+                 icon: Icon(Icons.delete)
+                 ),
+              onTap: () {
+              Get.toNamed(Routes.SIGNUP, arguments: user);
+              },
+            );
+          },
+        );
+      }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.toNamed('/signup');
+        },
+        child: Icon(Icons.add),
       ),
     );
   }

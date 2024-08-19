@@ -12,7 +12,8 @@ void main()async {
       apiKey: 'IzaSyCdECWa2gNPFjvFvxRsgmurPPv9i1hFWdw', 
       appId: '1:198583559989:android:40400f5367879210d48e7c', 
       messagingSenderId: '198583559989',
-       projectId: 'firetest-3c477'
+       projectId: 'firetest-3c477',
+       storageBucket: 'firetest-3c477.appspot.com'
        )
   );
   runApp(

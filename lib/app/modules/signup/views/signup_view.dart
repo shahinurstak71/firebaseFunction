@@ -1,73 +1,89 @@
+import 'dart:io';
 
+import 'package:firetest/app/data/usermodel.dart';
+import 'package:firetest/app/modules/signup/controllers/signup_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-
-import '../../../data/usermodel.dart';
-import '../controllers/signup_controller.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignupView extends GetView<SignupController> {
-  //final UserController userController = Get.put(UserController());
-  final UserModel? user =Get.arguments;
-
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
+  // final UserController userController = Get.put(UserController());
+  final UserModel? user = Get
+      .arguments; // If user is null, it's an add operation; otherwise, it's an update.
+  //File? _selectedImage;
+  final _selectedImage = Rx<File?>(null);
 
   @override
   Widget build(BuildContext context) {
-
-
-  /// pre-fill the form fields with the current user data
-  if(user != null){
-    nameController.text = user!.name;
-    emailController.text = user!.email;
-    phoneController.text = user!.phoneNumber;
-  }
-
+    TextEditingController nameController =
+        TextEditingController(text: user?.name ?? '');
+    TextEditingController emailController =
+        TextEditingController(text: user?.email ?? '');
+    TextEditingController phoneController =
+        TextEditingController(text: user?.phoneNumber ?? '');
 
     return Scaffold(
-      appBar: AppBar(title: Text('Add User')),
+      appBar: AppBar(title: Text(user == null ? 'Add User' : 'Update User')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Obx(() {
+              return GestureDetector(
+                onTap: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? pickedFile =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  if (pickedFile != null) {
+                    _selectedImage.value = File(pickedFile.path);
+                  }
+                },
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _selectedImage.value != null
+                      ? FileImage(_selectedImage.value!)
+                      : (user?.imageUrl != null
+                              ? NetworkImage(user!.imageUrl!)
+                              : AssetImage('assets/default_avatar.png'))
+                          as ImageProvider,
+                  child: Icon(Icons.camera_alt),
+                ),
+              );
+            }),
+            SizedBox(height: 20),
             TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: 'Name'),
-            ),
+                controller: nameController,
+                decoration: InputDecoration(labelText: 'Name')),
             TextField(
-              controller: emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
+                controller: emailController,
+                decoration: InputDecoration(labelText: 'Email')),
             TextField(
-              controller: phoneController,
-              decoration: InputDecoration(labelText: 'Phone Number'),
-              keyboardType: TextInputType.phone,
-            ),
+                controller: phoneController,
+                decoration: InputDecoration(labelText: 'Phone Number')),
             SizedBox(height: 20),
             ElevatedButton(
-              child: Text(user == null? 'Add User' : 'Update User'),
-              onPressed: () async {
-                //final docRef = FirebaseFirestore.instance.collection('users').doc();
-                final newUser = UserModel(
-                  id: user?.id ?? '', // ID will be set by Firestore
-                  name: nameController.text,
-                  email: emailController.text,
-                  phoneNumber: phoneController.text,
-                );
+              onPressed: () {
+                if (user == null) {
+                  // Add a new user
+                  UserModel newUser = UserModel(
+                    id: user?.id ?? '',
+                    name: nameController.text,
+                    email: emailController.text,
+                    phoneNumber: phoneController.text,
+                  );
+                  controller.addUser(newUser, _selectedImage.value);
+                  Get.back();
+                } else {
+                  // Update existing user
+                  user!.name = nameController.text;
+                  user!.email = emailController.text;
+                  user!.phoneNumber = phoneController.text;
 
-
-               if(user == null){
-                 await controller.addUser(newUser);
-               }else{
-                await controller.updateUser(newUser);
-
-               }
-
-
-                Get.back(); // Go back after adding the user
+                  controller.updateUser(user!, _selectedImage.value);
+                  Get.back();
+                }
               },
+              child: Text(user == null ? 'Add User' : 'Update User'),
             ),
           ],
         ),

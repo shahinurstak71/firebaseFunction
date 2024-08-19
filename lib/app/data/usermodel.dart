@@ -3,31 +3,33 @@ class UserModel {
   String name;
   String email;
   String phoneNumber;
+  String? imageUrl;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
     required this.phoneNumber,
+     this.imageUrl,
   });
 
-  // Convert UserModel to Map for Firestore
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
+      id: map['id'],
+      name: map['name'],
+      email: map['email'],
+      phoneNumber: map['phoneNumber'],
+      imageUrl: map['imageUrl'],
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
       'email': email,
       'phoneNumber': phoneNumber,
+      'imageUrl': imageUrl,
     };
-  }
-
-  // Create UserModel from Firestore document
-  factory UserModel.fromMap(Map<String, dynamic> map, String id) {
-    return UserModel(
-      id: id,
-      name: map['name'],
-      email: map['email'],
-      phoneNumber: map['phoneNumber'],
-    );
   }
 }
